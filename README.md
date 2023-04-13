@@ -6,7 +6,7 @@ An Unraid userscript to back up Plex data on a schedule with minimum downtime.
 If the Plex container `container_name` is running it will be stopped, if only an essential backup is being done it will be restarted once the data has been added to the archive, if a full backup is also being taken, the container will be restarted after the files/directories in the `stopped_backup_list` list have been added to the full backup archive.
 
 ## Compression
-By default, this script will compress the created archive files, this is only done after the Plex container has been restarted so that the downtime is minimal.
+By default, this script will compress the created archive files, this is only done after the Plex container has been restarted so that the downtime is minimal. Compression can be disabled by setting `compress_backup=no`.
 
 ## Configuration
 - `source` the path of your "Plex Media Server" directory i.e. `/mnt/cache_system/appdata/binhex-plexpass/Plex Media Server`
