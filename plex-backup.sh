@@ -24,7 +24,7 @@ compress_backup=yes                                                       # comp
 #       DO NOT MODIFY BELOW THIS LINE
 #-------------------------------------------------------------------------------------------------------
 
-start=`date +%s`	# start time of script for statistics
+start=`date`	# start time of script for statistics
 fail_counter=0
 plex_down_start=0
 plex_down_end=0
@@ -67,11 +67,11 @@ function fullBackup {
     echo "  backing up $source"
     tar -rf "$full_backup_filename" "$source"
   done
+  
+  # save the date of the full backup
+  echo "$start" > /boot/config/plugins/user.scripts/scripts/last_plex_backup
 
   echo "done"
-
-  # save the date of the full backup
-  date > /boot/config/plugins/user.scripts/scripts/last_plex_backup
 }
 
 # Get the state of the docker
@@ -125,9 +125,10 @@ if [ $full_backup == no ]; then
   echo "done"
   
   if [ $force_full_backup != 0 ]; then
-    days=$(( ($(date --date="$date" +%s) - $(date --date="$last_backup" +%s) )/(60*60*24) ))
+     # check how many days are between now and the last full backup run
+    days=$(( ($(date --date="" +%s) - $(date --date=$(date --date="$last_backup" +%Y-%m-%d) +%s) )/(60*60*24) ))
     
-    if [[ $days -gt $force_full_backup ]] || [[ $last_backup == 0 ]]; then
+    if [[ $days -ge $force_full_backup ]] || [[ $last_backup == 0 ]]; then
       cf=true
       fullBackup
     else
@@ -185,7 +186,7 @@ fi
 
 end=`date +%s`
 
-echo -e  "\nTotal time for backup: " $((end-start)) "seconds"
+echo -e  "\nTotal time for backup: " $((end - $(date --date="$start" +%s))) "seconds"
 
 if [ "$script_stopped_docker" = "true" ]; then
   echo -e  "Plex was down for: " $((plex_down_end-plex_down_start)) "seconds"
