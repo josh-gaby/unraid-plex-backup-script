@@ -160,12 +160,12 @@ if [ $compress_backup == yes ]; then
 fi
 
 echo -e  "\n\nRemoving Essential backups older than " $delete_after "days... please wait\n\n"
-find $destination/Essential* -mtime +$delete_after -exec rm -rfd {} \;
+find $destination/Essential* -daystart -mtime +$delete_after -exec rm -rfd {} \;
 
 old=$(( $force_full_backup*$keep_full ))
 if [ -d "$destination/Full" ]; then
   echo -e  "Removing Full backups older than " $old "days... please wait\n\n\n"
-  find $destination/Full* -mtime +$old -exec rm -rfd {} \;
+  find $destination/Full* -daystart -mtime +$old -exec rm -rfd {} \;
 fi
 
 if [ $notify == yes ]; then
